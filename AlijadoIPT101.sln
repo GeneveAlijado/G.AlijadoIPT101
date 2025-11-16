@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36327.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "AlijadoDatabase", "AlijadoDatabase\AlijadoDatabase.sqlproj", "{90B2F922-56A5-46B0-9498-E7C17B46350E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlijadoWPF", "AlijadoWPF\AlijadoWPF.csproj", "{F544EC8B-7ACA-40CF-A4EB-E29747C5126B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlijadoDomain", "AlijadoDomain\AlijadoDomain.csproj", "{38D11733-5C0D-4D36-847C-053267272833}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlijadoFramework", "AlijadoFramework\AlijadoFramework.csproj", "{0E24703B-A7D3-49F9-B9BA-DCCDD48CF0CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlijadoYouTubeViewer", "AlijadoYouTubeViewer\AlijadoYouTubeViewer.csproj", "{167A7D5A-A242-4B43-B249-E1C75EC59FB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AijadoWPF.v2", "AijadoWPF.v2\AijadoWPF.v2.csproj", "{77BE4C66-40F3-4A36-AFDC-B250E5803D5F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90B2F922-56A5-46B0-9498-E7C17B46350E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F544EC8B-7ACA-40CF-A4EB-E29747C5126B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F544EC8B-7ACA-40CF-A4EB-E29747C5126B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F544EC8B-7ACA-40CF-A4EB-E29747C5126B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F544EC8B-7ACA-40CF-A4EB-E29747C5126B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D11733-5C0D-4D36-847C-053267272833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D11733-5C0D-4D36-847C-053267272833}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D11733-5C0D-4D36-847C-053267272833}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D11733-5C0D-4D36-847C-053267272833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E24703B-A7D3-49F9-B9BA-DCCDD48CF0CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E24703B-A7D3-49F9-B9BA-DCCDD48CF0CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E24703B-A7D3-49F9-B9BA-DCCDD48CF0CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E24703B-A7D3-49F9-B9BA-DCCDD48CF0CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{167A7D5A-A242-4B43-B249-E1C75EC59FB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{167A7D5A-A242-4B43-B249-E1C75EC59FB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{167A7D5A-A242-4B43-B249-E1C75EC59FB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{167A7D5A-A242-4B43-B249-E1C75EC59FB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77BE4C66-40F3-4A36-AFDC-B250E5803D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77BE4C66-40F3-4A36-AFDC-B250E5803D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77BE4C66-40F3-4A36-AFDC-B250E5803D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77BE4C66-40F3-4A36-AFDC-B250E5803D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5EBDA4A-CA1D-47BB-8E0D-B570602E7DA8}
+	EndGlobalSection
+EndGlobal

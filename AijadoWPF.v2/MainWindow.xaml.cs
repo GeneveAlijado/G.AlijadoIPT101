@@ -1,35 +1,37 @@
 ﻿using System;
-using System.Data;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Generic;
+using EntityFramework.v2;
 
-namespace MOTORPARTS
+namespace AlijadoWPF.v2
 {
     public partial class MainWindow : Window
     {
-        // Connection string for LocalDB
-        private string connectionString =
-            @"Data Source=(localdb)\ProjectModels;Initial Catalog=AlijadoDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;";
+        private readonly IPartRepository _repo;
+        private List<Part> _parts;
 
+        // Parameterless constructor for WPF XAML
         public MainWindow()
         {
             InitializeComponent();
+
+            // Create DbContext using factory (pass empty array)
+            var dbContext = new PartsDbContextFactory().CreateDbContext(new string[0]);
+
+            // Create repository manually
+            _repo = new PartRepository(dbContext);
+
             LoadData();
         }
 
-        // LOAD DATA INTO DATAGRID
-        private void LoadData()
+        private async void LoadData()
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM MotorParts", con);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dgParts.ItemsSource = dt.DefaultView;
-                }
+                _parts = await _repo.GetAllAsync();
+                dgParts.ItemsSource = _parts;
             }
             catch (Exception ex)
             {
@@ -37,27 +39,21 @@ namespace MOTORPARTS
             }
         }
 
-        // ADD PART
-        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        private async void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtPartName.Text)) return;
+
+            var part = new Part
+            {
+                Part_Name = txtPartName.Text,
+                Part_Number = txtPartNumber.Text,
+                Descriptions = txtDescription.Text,
+                Price = decimal.TryParse(txtPrice.Text, out var p) ? p : 0
+            };
+
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-                    string query = @"INSERT INTO MotorParts 
-                                    (Part_Name, Part_Number, Descriptions, Price)
-                                    VALUES (@Name, @Number, @Desc, @Price)";
-
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@Name", txtPartName.Text);
-                    cmd.Parameters.AddWithValue("@Number", txtPartNumber.Text);
-                    cmd.Parameters.AddWithValue("@Desc", txtDescription.Text);
-                    cmd.Parameters.AddWithValue("@Price", txtPrice.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-
+                await _repo.AddAsync(part);
                 LoadData();
                 ClearFields();
             }
@@ -67,37 +63,21 @@ namespace MOTORPARTS
             }
         }
 
-        // EDIT PART
-        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        private async void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtPartID.Text))
-            {
-                MessageBox.Show("Select an item to edit.");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(txtPartID.Text)) return;
 
             try
             {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    con.Open();
-                    string query = @"UPDATE MotorParts SET
-                                    Part_Name=@Name,
-                                    Part_Number=@Number,
-                                    Descriptions=@Desc,
-                                    Price=@Price
-                                    WHERE Part_ID=@ID";
+                var part = await _repo.GetByIdAsync(int.Parse(txtPartID.Text));
+                if (part == null) return;
 
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@ID", txtPartID.Text);
-                    cmd.Parameters.AddWithValue("@Name", txtPartName.Text);
-                    cmd.Parameters.AddWithValue("@Number", txtPartNumber.Text);
-                    cmd.Parameters.AddWithValue("@Desc", txtDescription.Text);
-                    cmd.Parameters.AddWithValue("@Price", txtPrice.Text);
+                part.Part_Name = txtPartName.Text;
+                part.Part_Number = txtPartNumber.Text;
+                part.Descriptions = txtDescription.Text;
+                part.Price = decimal.TryParse(txtPrice.Text, out var p) ? p : part.Price;
 
-                    cmd.ExecuteNonQuery();
-                }
-
+                await _repo.UpdateAsync(part);
                 LoadData();
                 ClearFields();
             }
@@ -107,87 +87,48 @@ namespace MOTORPARTS
             }
         }
 
-        // DELETE PART
-        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        private async void BtnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtPartID.Text))
+            if (!string.IsNullOrWhiteSpace(txtPartID.Text))
             {
-                MessageBox.Show("Select a row to delete.");
-                return;
-            }
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
+                try
                 {
-                    con.Open();
-                    string query = "DELETE FROM MotorParts WHERE Part_ID=@ID";
-
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@ID", txtPartID.Text);
-
-                    cmd.ExecuteNonQuery();
+                    await _repo.DeleteAsync(int.Parse(txtPartID.Text));
+                    LoadData();
+                    ClearFields();
                 }
-
-                LoadData();
-                ClearFields();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error deleting part: " + ex.Message);
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error deleting part: " + ex.Message);
+                }
             }
         }
 
-        // FILL INPUT FIELDS WHEN SELECTING A ROW
         private void dgParts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            try
+            if (dgParts.SelectedItem is Part p)
             {
-                DataRowView row = dgParts.SelectedItem as DataRowView;
-                if (row == null) return;
-
-                txtPartID.Text = row["Part_ID"].ToString();
-                txtPartName.Text = row["Part_Name"].ToString().Trim();
-                txtPartNumber.Text = row["Part_Number"].ToString().Trim();
-                txtDescription.Text = row["Descriptions"].ToString().Trim();
-                txtPrice.Text = row["Price"].ToString().Trim();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error selecting row: " + ex.Message);
+                txtPartID.Text = p.Part_ID.ToString();
+                txtPartName.Text = p.Part_Name;
+                txtPartNumber.Text = p.Part_Number;
+                txtDescription.Text = p.Descriptions;
+                txtPrice.Text = p.Price.ToString();
             }
         }
 
-        // SEARCH PARTS
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string keyword = txtSearch.Text;
+            if (_parts == null) return;
 
-            try
-            {
-                using (SqlConnection con = new SqlConnection(connectionString))
-                {
-                    string query = @"SELECT * FROM MotorParts
-                                     WHERE Part_Name LIKE @kw
-                                        OR Part_Number LIKE @kw
-                                        OR Descriptions LIKE @kw
-                                        OR Price LIKE @kw";
-
-                    SqlDataAdapter da = new SqlDataAdapter(query, con);
-                    da.SelectCommand.Parameters.AddWithValue("@kw", "%" + keyword + "%");
-
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dgParts.ItemsSource = dt.DefaultView;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error searching: " + ex.Message);
-            }
+            string keyword = txtSearch.Text.ToLower();
+            dgParts.ItemsSource = _parts
+                .Where(p =>
+                    (p.Part_Name?.ToLower().Contains(keyword) ?? false) ||
+                    (p.Part_Number?.ToLower().Contains(keyword) ?? false) ||
+                    (p.Descriptions?.ToLower().Contains(keyword) ?? false))
+                .ToList();
         }
 
-        // CLEAR INPUT FIELDS
         private void ClearFields()
         {
             txtPartID.Text = "";

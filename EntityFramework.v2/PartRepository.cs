@@ -1,0 +1,48 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace EntityFramework.v2
+{
+    public class PartRepository : IPartRepository
+    {
+        private readonly PartsDbContext _context;
+
+        public PartRepository(PartsDbContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<List<Part>> GetAllAsync()
+        {
+            return await _context.Parts.AsNoTracking().ToListAsync();
+        }
+
+        public async Task<Part> GetByIdAsync(int id)
+        {
+            return await _context.Parts.FindAsync(id);
+        }
+
+        public async Task AddAsync(Part part)
+        {
+            _context.Parts.Add(part);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(Part part)
+        {
+            _context.Parts.Update(part);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var part = await _context.Parts.FindAsync(id);
+            if (part != null)
+            {
+                _context.Parts.Remove(part);
+                await _context.SaveChangesAsync();
+            }
+        }
+    }
+}
